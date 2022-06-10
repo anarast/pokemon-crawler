@@ -7,19 +7,7 @@ from pokemon.models import Ability, Pokemon, Move
 
 class PokemonClient:
     def __init__(self, url):
-      self._url = url
-
-    def get_pokemon(self):
-      try:
-        response = requests.get(self._url)
-        pokemon_data = response.json()
-        while pokemon_data['next'] is not None:
-          response = requests.get(pokemon_data['next'])
-          pokemon_data = response.json()
-          for pokemon in pokemon_data['results']:
-            yield pokemon
-      except:
-        traceback.print_exc()
+      self.url = url
         
     def catch_pokemon(self):
       for pokemon in self.get_pokemon():
@@ -35,6 +23,19 @@ class PokemonClient:
         pokemon_url = pokemon['url']
         self.get_pokemon_details(pokemon=new_pokemon, pokemon_url=pokemon_url)
     
+    def get_pokemon(self):
+      try:
+        response = requests.get(self.url)
+        pokemon_data = response.json()
+        
+        while pokemon_data['next'] is not None:
+          response = requests.get(pokemon_data['next'])
+          pokemon_data = response.json()
+          for pokemon in pokemon_data['results']:
+            yield pokemon
+      except:
+        traceback.print_exc()
+        
     def get_pokemon_details(self, pokemon: Pokemon, pokemon_url: str):
       response = requests.get(pokemon_url)
       response = response.json()
