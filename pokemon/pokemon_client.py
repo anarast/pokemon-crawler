@@ -30,10 +30,11 @@ class PokemonClient:
     pokemon_data = response.json()
     
     while pokemon_data['next'] is not None:
-      response = requests.get(pokemon_data['next'])
-      pokemon_data = response.json()
       for pokemon in pokemon_data['results']:
         yield pokemon
+      
+      response = requests.get(pokemon_data['next'])
+      pokemon_data = response.json()
       
   def get_and_save_pokemon_details(self, pokemon: Pokemon, pokemon_url: str):
     response = requests.get(pokemon_url)
